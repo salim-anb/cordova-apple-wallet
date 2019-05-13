@@ -140,6 +140,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         
         
         // Filters the networks shown in the introduction view to this single network.
+        //*************SALEM this would also include the co badged
         NSString* paymentNetwork = [options objectForKey:@"paymentNetwork"];
         if([[paymentNetwork uppercaseString] isEqualToString:@"VISA"]) {
             configuration.paymentNetwork = PKPaymentNetworkVisa;
@@ -152,7 +153,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         self.addPaymentPassModal = [[PKAddPaymentPassViewController alloc] initWithRequestConfiguration:configuration delegate:self];
         
         if(!self.addPaymentPassModal) {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Can not init PKAddPaymentPassViewController"];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Error initiating PKAddPaymentPassViewController"];
             [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         } else {
