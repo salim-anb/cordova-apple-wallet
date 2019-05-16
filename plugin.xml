@@ -21,12 +21,7 @@
             </feature>
         </config-file>
 
-        <config-file target="Entitlements-Debug.plist">
-			<key>com.apple.developer.payment-pass-provisioning</key>
-            <true/>
-        </config-file>
-        <config-file target="Entitlements-Release.plist">
-            <key>com.apple.developer.payment-pass-provisioning</key>
+        <config-file target="*/Entitlements-*.plist" paremt="com.apple.developer.payment-pass-provisioning">
             <true/>
         </config-file>
 
