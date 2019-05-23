@@ -47,6 +47,45 @@ var AppleWallet = {
             }, PLUGIN_NAME, 'isCardExistInWalletOrWatch', [passSuffixData]);
         });
     },
+       /**
+     * @function getPAIWithSuffix
+     * @description a function to get pai 
+     * @param {Object} [passSuffixData] - an object contains the primaryAccountSuffix
+     * @param {Function} [successCallback] - Optional success callback, recieves message object.
+     * @param {Function} [errorCallback] - Optional error callback, recieves message object.
+     * @returns {Promise<Object>} object contains pai
+     */
+    getPAIWithSuffix: function(passSuffixData, successCallback, errorCallback) {
+        return new Promise(function(resolve, reject) {
+            exec(function(message) {
+                executeCallback(successCallback, message);
+                resolve(message);
+            }, function(message) {
+                executeCallback(errorCallback, message);
+                reject(message);
+            }, PLUGIN_NAME, 'getPAI', [passSuffixData]);
+        });
+    },
+
+       /**
+     * @function whereIsCardAddedSuffix
+     * @description a function to get location of card 
+     * @param {Object} [passSuffixData] - an object contains the primaryAccountSuffix
+     * @param {Function} [successCallback] - Optional success callback, recieves message object.
+     * @param {Function} [errorCallback] - Optional error callback, recieves message object.
+     * @returns {Promise<Object>} object p -> phone , w -> watch, pw -> both, or empty -> none
+     */
+    whereIsCardAddedSuffix: function(passSuffixData, successCallback, errorCallback) {
+        return new Promise(function(resolve, reject) {
+            exec(function(message) {
+                executeCallback(successCallback, message);
+                resolve(message);
+            }, function(message) {
+                executeCallback(errorCallback, message);
+                reject(message);
+            }, PLUGIN_NAME, 'whereIsCardAddedSuffix', [passSuffixData]);
+        });
+    },
     /**
      * @function isPairedWatchExist
      * @description to check out if there is any paired Watches so that you can toggle visibility of 'Add to Watch' button
