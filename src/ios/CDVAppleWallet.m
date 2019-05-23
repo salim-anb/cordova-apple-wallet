@@ -199,15 +199,15 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     // the leaf certificate will be the first element of that array and the sub-CA certificate will follow.
     NSString *certificateOfIndexZeroString = [certificates[0] base64EncodedStringWithOptions:0];
     NSString *certificateOfIndexOneString = [certificates[1] base64EncodedStringWithOptions:0];
-    NSString *nonceString = [nonce base64EncodedStringWithOptions:0];
-    NSString *nonceSignatureString = [nonceSignature base64EncodedStringWithOptions:0];
+    NSString *nonceString = [self hexStringFromData:nonce];
+    NSString *nonceSignString = [self hexStringFromData:nonceSignature];
     
     NSDictionary* dictionary = @{ @"data" :
                                       @{
                                           @"certificateLeaf" : certificateOfIndexZeroString,
                                           @"certificateSubCA" : certificateOfIndexOneString,
                                           @"nonce" : nonceString,
-                                          @"nonceSignature" : nonceSignatureString,
+                                          @"nonceSignature" : nonceSignString,
                                           }
                                   };
     
@@ -261,6 +261,34 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     }
 }
 
+
+- (NSString *) hexStringFromData:(NSData *)data
+{
+    NSUInteger bytesCount = data.length;
+    if (bytesCount) {
+        const char *hexChars = "0123456789ABCDEF";
+        const unsigned char *dataBuffer = data.bytes;
+        char *chars = malloc(sizeof(char) * (bytesCount * 2 + 1));
+        if (chars == NULL) {
+            // malloc returns null if attempting to allocate more memory than the system can provide. Thanks Cœur
+            [NSException raise:@"NSInternalInconsistencyException" format:@"Failed to allocate more memory" arguments:nil];
+            return nil;
+        }
+        char *s = chars;
+        for (unsigned i = 0; i < bytesCount; ++i) {
+            *s++ = hexChars[((*dataBuffer & 0xF0) >> 4)];
+            *s++ = hexChars[(*dataBuffer & 0x0F)];
+            dataBuffer++;
+        }
+        *s = '\0';
+        NSString *hexString = [NSString stringWithUTF8String:chars];
+        free(chars);
+        return hexString;
+    }
+    return @"";
+}
+
+
 - (NSData *)HexToNSData:(NSString *)hexString
 {
     hexString = [hexString stringByReplacingOccurrencesOfString:@" " withString:@""];
@@ -276,6 +304,57 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     }
     NSLog(@"%@", commandToSend);
     return commandToSend;
+}
+
+
+
+
+//This fxn returns p , w , pw, or empty
+-(NSString *)whereIsCardAddedSuffix:(NSString *)suffix{
+    NSString *final = @"";
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray<PKPass *>  *passes = [passLibrary passesOfType: PKPassTypePayment];
+    if([passes count] != 0)
+    {
+        for (PKPass* pass in passes)
+        {
+            if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
+                final = [final stringByAppendingString:@"p"];
+                break;
+            }
+        }
+    }
+
+    NSArray<PKPass *> *remotepasses = [passLibrary remotePaymentPasses];
+    if([remotepasses count] != 0 ){
+        for (PKPass* pass in remotepasses) {
+            if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
+                final =  [final stringByAppendingString:@"w"];
+                break;
+            }}
+    }
+    return final;
+}
+
+
+-(NSString*)getPAI:(NSString*)suffix{
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray<PKPass *>  *passes = [passLibrary passesOfType: PKPassTypePayment];
+    if([passes count] != 0){
+        for (PKPass* pass in passes) {
+            if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
+                return pass.paymentPass.primaryAccountIdentifier;
+            }
+        }
+    }
+    NSArray<PKPass *> *remotepasses = [passLibrary remotePaymentPasses];
+    if([remotepasses count] != 0 ){
+        for (PKPass* pass in remotepasses) {
+            if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
+                return pass.paymentPass.primaryAccountIdentifier;
+            }}
+    }
+    return @"";
 }
 
 @end
