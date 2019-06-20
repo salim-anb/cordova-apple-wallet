@@ -310,7 +310,11 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
 
 //This fxn returns p , w , pw, or empty
--(NSString *)whereIsCardAddedSuffix:(NSString *)suffix{
+-(NSString *)whereIsCardAddedSuffix:(CDVInvokedUrlCommand *)command{
+
+    NSArray* arguments = command.arguments;
+    NSDictionary* options = [arguments objectAtIndex:0];
+    NSString* suffix = [options objectForKey:@"suffix"];
     NSString *final = @"";
     PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
     NSArray<PKPass *>  *passes = [passLibrary passesOfType: PKPassTypePayment];
@@ -337,7 +341,10 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 }
 
 
--(NSString*)getPAI:(NSString*)suffix{
+-(NSString*)getPAI:(CDVInvokedUrlCommand *)command{
+    NSArray* arguments = command.arguments;
+    NSDictionary* options = [arguments objectAtIndex:0];
+    NSString* suffix = [options objectForKey:@"suffix"];
     PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
     NSArray<PKPass *>  *passes = [passLibrary passesOfType: PKPassTypePayment];
     if([passes count] != 0){
