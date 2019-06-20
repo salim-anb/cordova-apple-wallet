@@ -1125,8 +1125,8 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
             }}
     }
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:final];
-    [commandResult setKeepCallback:[NSNumber numberWithBool:YES]];
-    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+    [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 
@@ -1142,8 +1142,8 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         for (PKPass* pass in passes) {
             if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
                 CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:pass.paymentPass.primaryAccountIdentifier];
-                [commandResult setKeepCallback:[NSNumber numberWithBool:YES]];
-                [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+                [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
             }
         }
     }
@@ -1152,13 +1152,13 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         for (PKPass* pass in remotepasses) {
             if(pass.paymentPass.primaryAccountNumberSuffix == suffix){
                 CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:pass.paymentPass.primaryAccountIdentifier];
-                [commandResult setKeepCallback:[NSNumber numberWithBool:YES]];
-                [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];            }}
+                [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+                [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];            }}
     }
 	else{
 		CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
-		[commandResult setKeepCallback:[NSNumber numberWithBool:YES]];
-		[self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
+		[pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
+		[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 	}
 }
 
