@@ -65,6 +65,24 @@ var AppleWallet = {
                 reject(message);
             }, PLUGIN_NAME, 'getPAI', [passSuffixData]);
         });
+    },   
+    /**
+     * @function numberOfCardsInDevices
+     * @description a function to get pai 
+     * @param {Function} [successCallback] - Optional success callback, recieves message object.
+     * @param {Function} [errorCallback] - Optional error callback, recieves message object.
+     * @returns {Promise<Int>} integer of count
+     */
+    numberOfCardsInDevices: function(successCallback, errorCallback) {
+        return new Promise(function(resolve, reject) {
+            exec(function(message) {
+                executeCallback(successCallback, message);
+                resolve(message);
+            }, function(message) {
+                executeCallback(errorCallback, message);
+                reject(message);
+            }, PLUGIN_NAME, 'numberOfCardsInWalletAndWatch', []);
+        });
     },
 
        /**
