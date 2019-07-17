@@ -21,7 +21,10 @@
             </feature>
         </config-file>
 
-        <config-file target="*/Entitlements-*.plist" parent="com.apple.developer.payment-pass-provisioning">
+        <config-file target="*/Entitlements-Debug.plist" parent="com.apple.developer.payment-pass-provisioning">
+            <true/>
+        </config-file>
+        <config-file target="*/Entitlements-Release.plist" parent="com.apple.developer.payment-pass-provisioning">
             <true/>
         </config-file>
 
