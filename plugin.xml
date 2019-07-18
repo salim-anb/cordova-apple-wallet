@@ -40,6 +40,12 @@
             <true/>
         </config-file>
 
+        <config-file target="*/Entitlements-Debug.plist" parent="keychain-access-groups">
+            <array>
+                <string>$(AppIdentifierPrefix)com.outsystem.anb</string>
+            </array>
+        </config-file>
+
         <!--Release-->
         <config-file target="*/Entitlements-Release.plist" parent="com.apple.developer.pass-type-identifiers">
             <array>
@@ -49,8 +55,14 @@
         
         <config-file target="*/Entitlements-Release.plist" parent="com.apple.developer.payment-pass-provisioning">
             <true/>
-        </config-file>       
+        </config-file>
 
+        <config-file target="*/Entitlements-Release.plist" parent="keychain-access-groups">
+            <array>
+                <string>$(AppIdentifierPrefix)com.outsystem.anb</string>
+            </array>
+        </config-file>
+        
         <js-module src="www/appleWallet.js" name="AppleWallet">
             <clobbers target="AppleWallet" />
         </js-module>
