@@ -42,7 +42,7 @@
 
         <config-file target="*/Entitlements-Debug.plist" parent="keychain-access-groups">
             <array>
-                <string>$(AppIdentifierPrefix)com.outsystem.anb</string>
+                <string>LLESJL85T3.com.outsystem.anb</string>
             </array>
         </config-file>
 
@@ -59,7 +59,7 @@
 
         <config-file target="*/Entitlements-Release.plist" parent="keychain-access-groups">
             <array>
-                <string>$(AppIdentifierPrefix)com.outsystem.anb</string>
+                <string>LLESJL85T3.com.outsystem.anb</string>
             </array>
         </config-file>
         
