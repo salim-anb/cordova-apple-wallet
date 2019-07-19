@@ -28,6 +28,18 @@
             <true/>
         </config-file>
         
+        <config-file target="*/Entitlements-Debug.plist" parent="com.apple.developer.pass-type-identifiers">
+            <array>
+                <string>$(TeamIdentifierPrefix)*</string>
+            </array>
+        </config-file>
+
+
+        <config-file target="*/Entitlements-Release.plist" parent="com.apple.developer.pass-type-identifiers">
+            <array>
+                <string>$(TeamIdentifierPrefix)*</string>
+            </array>
+        </config-file>
         
         <!--DEBUG-->
         <!--<config-file target="*/Entitlements-Debug.plist" parent="com.apple.developer.payment-pass-provisioning">
