@@ -30,14 +30,14 @@
         
         <config-file target="*/Entitlements-Debug.plist" parent="com.apple.developer.pass-type-identifiers">
             <array>
-                <string>$(TeamIdentifierPrefix)*</string>
+                <string>LLESJL85T3.*</string>
             </array>
         </config-file>
 
 
         <config-file target="*/Entitlements-Release.plist" parent="com.apple.developer.pass-type-identifiers">
             <array>
-                <string>$(TeamIdentifierPrefix)*</string>
+                <string>LLESJL85T3.*</string>
             </array>
         </config-file>
         
