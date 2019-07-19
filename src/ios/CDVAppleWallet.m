@@ -245,9 +245,9 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         NSString* encryptedPassData = [options objectForKey:@"encryptedPassData"];
         NSString* wrappedKey = [options objectForKey:@"wrappedKey"];
 
-        request.activationData = [[NSData alloc] initWithBase64EncodedString:activationData options:0]; //[activationData dataUsingEncoding:NSUTF8StringEncoding];
-        request.encryptedPassData = [[NSData alloc] initWithBase64EncodedString:encryptedPassData options:0];
-        request.wrappedKey = [[NSData alloc] initWithBase64EncodedString:wrappedKey options:0];
+        request.activationData = [[NSData alloc] initWithBase64EncodedString:activationData options:NSDataBase64DecodingIgnoreUnknownCharacters]; //[activationData dataUsingEncoding:NSUTF8StringEncoding];
+        request.encryptedPassData = [[NSData alloc] initWithBase64EncodedString:encryptedPassData options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        request.wrappedKey = [[NSData alloc] initWithBase64EncodedString:wrappedKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
         // Issue request
         self.completionHandler(request);
