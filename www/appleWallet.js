@@ -35,6 +35,7 @@ var AppleWallet = {
      * @param {Function} [successCallback] - Optional success callback, recieves message object.
      * @param {Function} [errorCallback] - Optional error callback, recieves message object.
      * @returns {Promise<Object>} object contains boolean values that ensure that card is already exists in wallet or paired-watch
+     * adding comments by salim
      */
     isCardExistInWalletOrWatch: function(passSuffixData, successCallback, errorCallback) {
         return new Promise(function(resolve, reject) {
