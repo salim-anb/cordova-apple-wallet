@@ -112,7 +112,7 @@ var AppleWallet = {
      * @param {Function} [errorCallback] - Optional error callback, recieves message object.
      * @returns {Promise<boolean>} object contains boolean value that ensure that there is already a paired Watch
      */
-    isPairedWatchExist: function(successCallback, errorCallback) {
+    checkPairedDevices: function(successCallback, errorCallback) {
         return new Promise(function(resolve, reject) {
             exec(function(message) {
                 executeCallback(successCallback, message);
@@ -120,7 +120,7 @@ var AppleWallet = {
             }, function(message) {
                 executeCallback(errorCallback, message);
                 reject(message);
-            }, PLUGIN_NAME, 'isPairedWatchExist', []);
+            }, PLUGIN_NAME, 'checkPairedDevices', []);
         });
     },
     /**
