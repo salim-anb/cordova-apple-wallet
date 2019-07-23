@@ -2,6 +2,7 @@
  * Created 8/8/2018
  * @author Hatem
  * @implementation {AppleWallet} file CDVAppleWallet
+ * Copyright (c) Enigma Advanced Labs 2019
  */
 
 #import "CDVAppleWallet.h"
@@ -14,16 +15,17 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
 @interface AppleWallet()<PKAddPaymentPassViewControllerDelegate>
 
-@property (nonatomic, assign) BOOL isRequestIssued;
-@property (nonatomic, assign) BOOL isRequestIssuedSuccess;
 
-@property (nonatomic, strong) completedPaymentProcessHandler completionHandler;
-@property (nonatomic, strong) NSString* stringFromData;
+  @property (nonatomic, assign) BOOL isRequestIssued;
+  @property (nonatomic, assign) BOOL isRequestIssuedSuccess;
 
-@property (nonatomic, copy) NSString* transactionCallbackId;
-@property (nonatomic, copy) NSString* completionCallbackId;
+  @property (nonatomic, strong) completedPaymentProcessHandler completionHandler;
+  @property (nonatomic, strong) NSString* stringFromData;
 
-@property (nonatomic, retain) UIViewController* addPaymentPassModal;
+  @property (nonatomic, copy) NSString* transactionCallbackId;
+  @property (nonatomic, copy) NSString* completionCallbackId;
+  
+  @property (nonatomic, retain) UIViewController* addPaymentPassModal;
 
 @end
 
@@ -41,13 +43,99 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     return [PKAddPaymentPassViewController canAddPaymentPass];
 }
 
-
-- (void)isAvailable:(CDVInvokedUrlCommand *)command    {
+// Plugin Method - check Device Eligibility
+- (void) isAvailable:(CDVInvokedUrlCommand *)command
+{
     CDVPluginResult *commandResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[AppleWallet canAddPaymentPass]];
     [commandResult setKeepCallback:[NSNumber numberWithBool:YES]];
-
+    [self.commandDelegate sendPluginResult:commandResult callbackId:command.callbackId];
 }
-- (void)isPairedWatchExist:(CDVInvokedUrlCommand *)command
+
+// Plugin Method - check Card Eligibility
+- (void) checkCardEligibility:(CDVInvokedUrlCommand*)command {
+    NSString * cardIdentifier = [command.arguments objectAtIndex:0];
+    Boolean cardEligible = true;
+    Boolean cardAddedtoPasses = false;
+    Boolean cardAddedtoRemotePasses = false;
+    
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
+    for (PKPass *pass in paymentPasses) {
+         PKPaymentPass * paymentPass = [pass paymentPass];
+        if([paymentPass primaryAccountIdentifier] == cardIdentifier)
+            cardAddedtoPasses = true;
+    }
+    
+    if (WCSession.isSupported) { // check if the device support to handle an Apple Watch
+        WCSession *session = [WCSession defaultSession];
+        [session setDelegate:self.appDelegate];
+        [session activateSession];
+        
+        if ([session isPaired]) { // Check if the iPhone is paired with the Apple Watch
+            paymentPasses = [passLibrary remotePaymentPasses];
+            for (PKPass *pass in paymentPasses) {
+                PKPaymentPass * paymentPass = [pass paymentPass];
+                if([paymentPass primaryAccountIdentifier] == cardIdentifier)
+                    cardAddedtoRemotePasses = true;
+            }
+        }
+        else
+            cardAddedtoRemotePasses = true;
+    }
+    else
+        cardAddedtoRemotePasses = true;
+
+    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
+    
+    CDVPluginResult *pluginResult;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
+    //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[passLibrary canAddPaymentPassWithPrimaryAccountIdentifier:cardIdentifier]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+// Plugin Method - check Card Eligibility By Suffix
+- (void) checkCardEligibilityBySuffix:(CDVInvokedUrlCommand*)command {
+    NSString * cardSuffix = [command.arguments objectAtIndex:0];
+    Boolean cardEligible = true;
+    Boolean cardAddedtoPasses = false;
+    Boolean cardAddedtoRemotePasses = false;
+    
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
+    for (PKPass *pass in paymentPasses) {
+        PKPaymentPass * paymentPass = [pass paymentPass];
+        if([paymentPass primaryAccountNumberSuffix] == cardSuffix)
+            cardAddedtoPasses = true;
+    }
+    
+    if (WCSession.isSupported) { // check if the device support to handle an Apple Watch
+        WCSession *session = [WCSession defaultSession];
+        [session setDelegate:self.appDelegate];
+        [session activateSession];
+        
+        if ([session isPaired]) { // Check if the iPhone is paired with the Apple Watch
+            paymentPasses = [passLibrary remotePaymentPasses];
+            for (PKPass *pass in paymentPasses) {
+                PKPaymentPass * paymentPass = [pass paymentPass];
+                if([paymentPass primaryAccountNumberSuffix] == cardSuffix)
+                    cardAddedtoRemotePasses = true;
+            }
+        }
+        else
+            cardAddedtoRemotePasses = true;
+    }
+    else
+        cardAddedtoRemotePasses = true;
+    
+    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
+    
+    CDVPluginResult *pluginResult;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+// Plugin Method - check paired devices
+- (void) checkPairedDevices:(CDVInvokedUrlCommand *)command 
 {
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
@@ -56,7 +144,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     } else {
         [dictionary setObject:@"False" forKey:@"isWatchPaired"];
     }
-
+    
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
     [pluginResult setKeepCallback:[NSNumber numberWithBool:YES]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
