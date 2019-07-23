@@ -231,9 +231,10 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         if([[paymentNetwork uppercaseString] isEqualToString:@"MASTERCARD"]) {
             configuration.paymentNetwork = PKPaymentNetworkMasterCard;
         }
-        if([[paymentNetwork uppercaseString] isEqualToString:@"VISAMADACO"]) {
-            configuration.paymentNetwork = PKPaymentNetworkMada;
-        }
+      
+        //if([[paymentNetwork uppercaseString] isEqualToString:@"VISAMADACO"]) {
+        //    configuration.paymentNetwork = PKPaymentNetworkMada;
+        //}
 
         // Present view controller
         self.addPaymentPassModal = [[PKAddPaymentPassViewController alloc] initWithRequestConfiguration:configuration delegate:self];
